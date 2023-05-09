@@ -185,8 +185,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
         hour, minute, second);
   }
 
-  @override
-  void initState() {
+  void setTime() {
     currentTime = widget.time == null ? DateTime.now() : widget.time;
 
     currentSelectedHourIndex =
@@ -214,7 +213,11 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
     currentSelectedAPIndex = currentTime!.hour >= 12 ? 2 : 1;
     apController = ScrollController(
         initialScrollOffset: (currentSelectedAPIndex - 1) * _getItemHeight()!);
+  }
 
+  @override
+  void initState() {
+    setTime();
     super.initState();
 
     if (widget.onTimeChange != null) {
