@@ -173,6 +173,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
   }
 
   DateTime getDateTime() {
+    setTime();
     int hour = currentSelectedHourIndex - _getHourCount();
     if (!widget.is24HourMode && currentSelectedAPIndex == 2) hour += 12;
     int minute = (currentSelectedMinuteIndex -
