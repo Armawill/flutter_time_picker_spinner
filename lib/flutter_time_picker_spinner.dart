@@ -223,8 +223,35 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
     }
   }
 
+  void getCurrentSelectedTime() {
+    currentTime = widget.time == null ? DateTime.now() : widget.time;
+
+    currentSelectedHourIndex =
+        (currentTime!.hour % (widget.is24HourMode ? 24 : 12)) + _getHourCount();
+    hourController.position
+        .correctPixels((currentSelectedHourIndex - 1) * _getItemHeight()!);
+    hourController.position.notifyListeners();
+
+    currentSelectedMinuteIndex =
+        (currentTime!.minute / widget.minutesInterval).floor() +
+            (isLoop(_getMinuteCount()) ? _getMinuteCount() : 1);
+    minuteController.position
+        .correctPixels((currentSelectedMinuteIndex - 1) * _getItemHeight()!);
+    minuteController.position.notifyListeners();
+
+    currentSelectedSecondIndex =
+        (currentTime!.second / widget.secondsInterval).floor() +
+            (isLoop(_getSecondCount()) ? _getSecondCount() : 1);
+    secondController.position
+        .correctPixels((currentSelectedSecondIndex - 1) * _getItemHeight()!);
+    secondController.position.notifyListeners();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.time != currentTime) {
+      getCurrentSelectedTime();
+    }
     // print(minuteController.offset);
     List<Widget> contents = [
       SizedBox(
