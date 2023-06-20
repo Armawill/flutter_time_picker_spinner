@@ -79,23 +79,25 @@ class TimePickerSpinner extends StatefulWidget {
   final double? spacing;
   final bool isForce2Digits;
   final TimePickerCallback? onTimeChange;
+  final bool isEnable;
 
-  TimePickerSpinner(
-      {Key? key,
-      this.time,
-      this.minutesInterval = 1,
-      this.secondsInterval = 1,
-      this.is24HourMode = true,
-      this.isShowSeconds = false,
-      this.highlightedTextStyle,
-      this.normalTextStyle,
-      this.itemHeight,
-      this.itemWidth,
-      this.alignment,
-      this.spacing,
-      this.isForce2Digits = false,
-      this.onTimeChange})
-      : super(key: key);
+  TimePickerSpinner({
+    Key? key,
+    this.time,
+    this.minutesInterval = 1,
+    this.secondsInterval = 1,
+    this.is24HourMode = true,
+    this.isShowSeconds = false,
+    this.highlightedTextStyle,
+    this.normalTextStyle,
+    this.itemHeight,
+    this.itemWidth,
+    this.alignment,
+    this.spacing,
+    this.isForce2Digits = false,
+    this.onTimeChange,
+    this.isEnable = true,
+  }) : super(key: key);
 
   @override
   _TimePickerSpinnerState createState() => _TimePickerSpinnerState();
@@ -263,6 +265,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
           currentSelectedHourIndex,
           isHourScrolling,
           1,
+          widget.isEnable,
           (index) {
             currentSelectedHourIndex = index;
             isHourScrolling = true;
@@ -314,7 +317,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
       contents.add(SizedBox(
         width: _getItemWidth()! * 1.2,
         height: _getItemHeight()! * 3,
-        child: apSpinner(),
+        child: apSpinner(widget.isEnable),
       ));
     }
 
@@ -338,6 +341,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
       int selectedIndex,
       bool isScrolling,
       int interval,
+      bool isEnable,
       SelectedIndexCallback onUpdateSelectedIndex,
       VoidCallback onScrollEnd) {
     /// wrapping the spinner with stack and add container above it when it's scrolling
@@ -406,7 +410,9 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
         },
         controller: controller,
         itemCount: isLoop(max) ? max * 3 : max + 2,
-        physics: ItemScrollPhysics(itemHeight: _getItemHeight()),
+        physics: isEnable
+            ? ItemScrollPhysics(itemHeight: _getItemHeight())
+            : const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
       ),
     );
@@ -424,7 +430,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
     );
   }
 
-  Widget apSpinner() {
+  Widget apSpinner(bool isEnable) {
     Widget _spinner = NotificationListener<ScrollNotification>(
       onNotification: (scrollNotification) {
         if (scrollNotification is UserScrollNotification) {
@@ -460,10 +466,12 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
         },
         controller: apController,
         itemCount: 4,
-        physics: ItemScrollPhysics(
-          itemHeight: _getItemHeight(),
-          targetPixelsLimit: 1,
-        ),
+        physics: isEnable
+            ? ItemScrollPhysics(
+                itemHeight: _getItemHeight(),
+                targetPixelsLimit: 1,
+              )
+            : const NeverScrollableScrollPhysics(),
       ),
     );
 
